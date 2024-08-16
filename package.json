@@ -1,12 +1,15 @@
 {
   "name": "hiryXtechKareerAssignment",
+  "version": "1.0.0",
+  "author": "sundeeep",
   "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
-  },
+"scripts": {
+  "dev": "turbo run dev",
+  "build": "turbo run build",
+  "start": "turbo run start",
+  "start:backend": "cd apps/multi-user-messaging-server && npm run dev",
+  "start:frontend":"cd apps/multi-user-messaging-app && npm run dev"
+},
   "devDependencies": {
     "prettier": "^3.2.5",
     "turbo": "^2.0.14",
