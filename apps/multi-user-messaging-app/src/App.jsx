@@ -3,9 +3,7 @@ import { Routes } from 'react-router-dom';
 
 const App = () => {
   return (
-    <Routes>
-      
-    </Routes>
+    <h1>Hello World</h1>
   )
 }
 
