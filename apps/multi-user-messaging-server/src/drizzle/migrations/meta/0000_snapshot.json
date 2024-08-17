@@ -1,34 +1,270 @@
 {
-  "id": "32ee266d-c5f6-420b-a717-e45a8e36d38a",
+  "id": "37a0d677-07a1-4a82-a40d-5ae45ff54e8e",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.user": {
-      "name": "user",
+    "public.chatRooms": {
+      "name": "chatRooms",
       "schema": "",
       "columns": {
-        "$userId": {
-          "name": "$userId",
+        "chatRoomID": {
+          "name": "chatRoomID",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "userName": {
-          "name": "userName",
-          "type": "varchar(16)",
+        "participants": {
+          "name": "participants",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "admin": {
+          "name": "admin",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
+        },
+        "coAdmins": {
+          "name": "coAdmins",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isGroup": {
+          "name": "isGroup",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "groupAvatar": {
+          "name": "groupAvatar",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "groupDescription": {
+          "name": "groupDescription",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
+    },
+    "public.messages": {
+      "name": "messages",
+      "schema": "",
+      "columns": {
+        "messageID": {
+          "name": "messageID",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "senderID": {
+          "name": "senderID",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "receiverID": {
+          "name": "receiverID",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "messageType": {
+          "name": "messageType",
+          "type": "messageType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "messageStatus": {
+          "name": "messageStatus",
+          "type": "messageStatus",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'sent'"
+        },
+        "content": {
+          "name": "content",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "seenAt": {
+          "name": "seenAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deliveredAt": {
+          "name": "deliveredAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sizeOfMessage": {
+          "name": "sizeOfMessage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "userID": {
+          "name": "userID",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'online'"
+        },
+        "archived": {
+          "name": "archived",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blocked": {
+          "name": "blocked",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isOnline": {
+          "name": "isOnline",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'customers'"
+        },
+        "about": {
+          "name": "about",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "lastSeen": {
+          "name": "lastSeen",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
     }
   },
-  "enums": {},
+  "enums": {
+    "public.messageStatus": {
+      "name": "messageStatus",
+      "schema": "public",
+      "values": [
+        "sent",
+        "delivered",
+        "seen"
+      ]
+    },
+    "public.messageType": {
+      "name": "messageType",
+      "schema": "public",
+      "values": [
+        "text",
+        "image",
+        "video"
+      ]
+    },
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": [
+        "admin",
+        "coadmin",
+        "customers"
+      ]
+    },
+    "public.status": {
+      "name": "status",
+      "schema": "public",
+      "values": [
+        "online",
+        "sleeping",
+        "at work",
+        "out station",
+        "do not disturb"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "_meta": {

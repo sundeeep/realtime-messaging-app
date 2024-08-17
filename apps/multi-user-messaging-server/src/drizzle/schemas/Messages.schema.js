@@ -1,7 +1,7 @@
 import { pgTable, uuid, varchar, timestamp, pgEnum, integer } from 'drizzle-orm/pg-core';
 
-const messageTypeEnum = pgEnum('messageType', ['text', 'image', 'video']);
-const messageStatusEnum = pgEnum('messageStatus', ['sent', 'delivered', 'seen']);
+export const messageTypeEnum = pgEnum('messageType', ['text', 'image', 'video']);
+export const messageStatusEnum = pgEnum('messageStatus', ['sent', 'delivered', 'seen']);
 
 export const messages = pgTable('messages', {
   messageID: uuid('messageID').primaryKey().defaultRandom(),

@@ -1,7 +1,7 @@
 import { pgTable, varchar, timestamp, boolean, pgEnum } from 'drizzle-orm/pg-core';
 
-const statusEnum = pgEnum('status', ['online', 'sleeping', 'at work', 'out station', "don't disturb"]);
-const roleEnum = pgEnum('role', ['admin', 'coadmin', 'customers']);
+export const statusEnum = pgEnum('status', ['online', 'sleeping', 'at work', 'out station', "do not disturb"]);
+export const roleEnum = pgEnum('role', ['admin', 'coadmin', 'customers']);
 
 export const users = pgTable('users', {
   userID: varchar('userID').primaryKey(),
