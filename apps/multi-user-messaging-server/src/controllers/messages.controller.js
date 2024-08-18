@@ -1,42 +1,56 @@
+
+// src/controllers/messageController.js
 import { db } from '../config/database.js';
 import { messages } from '../drizzle/schemas/message.js';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, or, desc } from 'drizzle-orm';
 
 export const messageController = {
-  sendMessage: async (req, res) => {
-    const { senderID, receiverID, content, messageType } = req.body;
-    try {
-      const [newMessage] = await db.insert(messages).values({
-        senderID,
-        receiverID,
-        content,
-        messageType,
-      }).returning();
-      res.status(201).json(newMessage);
-    } catch (error) {
-      res.status(500).json({ error: 'Error sending message' });
-    }
+  createMessage: async (messageData) => {
+    const [newMessage] = await db.insert(messages).values(messageData).returning();
+    return newMessage;
   },
 
-  getMessages: async (req, res) => {
-    const { senderID, receiverID, page = 1, limit = 20 } = req.query;
-    try {
-      const offset = (page - 1) * limit;
-      const messageList = await db.select()
-        .from(messages)
-        .where(
-          and(
-            eq(messages.senderID, senderID),
-            eq(messages.receiverID, receiverID)
-          )
-        )
-        .orderBy(desc(messages.createdAt))
-        .limit(limit)
-        .offset(offset);
-      res.json(messageList);
-    } catch (error) {
-      res.status(500).json({ error: 'Error fetching messages' });
-    }
+  getMessage: async (messageId) => {
+    return db.query.messages.findFirst({
+      where: eq(messages.id, messageId),
+      with: {
+        sender: true,
+        receiver: true
+      }
+    });
   },
 
+  updateMessage: async (messageId, messageData) => {
+    const [updatedMessage] = await db.update(messages)
+      .set(messageData)
+      .where(eq(messages.id, messageId))
+      .returning();
+    return updatedMessage;
+  },
+
+  deleteMessage: async (messageId) => {
+    await db.delete(messages).where(eq(messages.id, messageId));
+  },
+
+  getMessages: async (userID1, userID2) => {
+    return db.query.messages.findMany({
+      where: or(
+        and(eq(messages.senderID, userID1), eq(messages.receiverID, userID2)),
+        and(eq(messages.senderID, userID2), eq(messages.receiverID, userID1))
+      ),
+      orderBy: desc(messages.createdAt),
+      with: {
+        sender: true,
+        receiver: true
+      }
+    });
+  },
+
+  updateMessageStatus: async (messageId, status) => {
+    await db.update(messages)
+      .set({ status })
+      .where(eq(messages.id, messageId));
+  },
 };
+
+

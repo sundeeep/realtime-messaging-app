@@ -1,35 +1,111 @@
+// src/controllers/userController.js
 import { db } from '../config/database.js';
-import { users } from '../drizzle/schemas/user.js';
-import { eq } from 'drizzle-orm';
+import { users, chatRoomsToUsers } from '../drizzle/schemas/user.js';
+import { eq, ilike } from 'drizzle-orm';
 
 export const userController = {
-  registerUser: async (req, res) => {
-    const { userID, username, email } = req.body;
-    try {
-      await db.insert(users).values({ userID, username, email });
-      res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-      res.status(500).json({ error: 'Error registering user' });
-    }
+  createUser: async (userData) => {
+    const [newUser] = await db.insert(users).values(userData).returning();
+    return newUser;
   },
 
-  searchUsers: async (req, res) => {
-    const { query } = req.query;
-    try {
-      const results = await db.select().from(users).where(eq(users.username, query));
-      res.json(results);
-    } catch (error) {
-      res.status(500).json({ error: 'Error searching users' });
-    }
+  getUser: async (userID) => {
+    return db.query.users.findFirst({
+      where: eq(users.userID, userID),
+      with: {
+        chatRooms: {
+          with: {
+            chatRoom: true
+          }
+        }
+      }
+    });
   },
 
-  updateUserStatus: async (req, res) => {
-    const { userID, status } = req.body;
-    try {
-      await db.update(users).set({ status }).where(eq(users.userID, userID));
-      res.json({ message: 'Status updated successfully' });
-    } catch (error) {
-      res.status(500).json({ error: 'Error updating status' });
-    }
+  updateUser: async (userID, userData) => {
+    const [updatedUser] = await db.update(users)
+      .set(userData)
+      .where(eq(users.userID, userID))
+      .returning();
+    return updatedUser;
   },
+
+  deleteUser: async (userID) => {
+    await db.delete(users).where(eq(users.userID, userID));
+  },
+
+  searchUsers: async (query) => {
+    return db.query.users.findMany({
+      where: ilike(users.username, `%${query}%`)
+    });
+  },
+
+  updateStatus: async (userID, status) => {
+    await db.update(users)
+      .set({ status, lastSeen: new Date() })
+      .where(eq(users.userID, userID));
+  },
+
+  updateOnlineStatus: async (userID, isOnline) => {
+    await db.update(users)
+      .set({ isOnline, lastSeen: new Date() })
+      .where(eq(users.userID, userID));
+  },
+
+  addToArchived: async (userID, archivedUserID) => {
+    const user = await db.query.users.findFirst({
+      where: eq(users.userID, userID)
+    });
+    const updatedArchived = [...(user.archived || []), archivedUserID];
+    await db.update(users)
+      .set({ archived: updatedArchived })
+      .where(eq(users.userID, userID));
+  },
+
+  addToBlocked: async (userID, blockedUserID) => {
+    const user = await db.query.users.findFirst({
+      where: eq(users.userID, userID)
+    });
+    const updatedBlocked = [...(user.blocked || []), blockedUserID];
+    await db.update(users)
+      .set({ blocked: updatedBlocked })
+      .where(eq(users.userID, userID));
+  },
+
+  removeFromArchived: async (userID, archivedUserID) => {
+    const user = await db.query.users.findFirst({
+      where: eq(users.userID, userID)
+    });
+    const updatedArchived = (user.archived || []).filter(id => id !== archivedUserID);
+    await db.update(users)
+      .set({ archived: updatedArchived })
+      .where(eq(users.userID, userID));
+  },
+
+  removeFromBlocked: async (userID, blockedUserID) => {
+    const user = await db.query.users.findFirst({
+      where: eq(users.userID, userID)
+    });
+    const updatedBlocked = (user.blocked || []).filter(id => id !== blockedUserID);
+    await db.update(users)
+      .set({ blocked: updatedBlocked })
+      .where(eq(users.userID, userID));
+  },
+
+  getUserChatRooms: async (userID) => {
+    return db.query.chatRoomsToUsers.findMany({
+      where: eq(chatRoomsToUsers.userID, userID),
+      with: {
+        chatRoom: {
+          with: {
+            participants: {
+              with: {
+                user: true
+              }
+            }
+          }
+        }
+      }
+    });
+  }
 };

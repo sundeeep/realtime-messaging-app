@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "author": "sundeeep",
   "private": true,
-"scripts": {
-  "dev": "turbo run dev",
-  "build": "turbo run build",
-  "start": "turbo run start",
-  "start:backend": "cd apps/multi-user-messaging-server && npm run dev",
-  "start:frontend":"cd apps/multi-user-messaging-app && npm run dev"
-},
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "start:backend": "cd apps/multi-user-messaging-server && npm run dev",
+    "start:frontend": "cd apps/multi-user-messaging-app && npm run dev"
+  },
   "devDependencies": {
     "prettier": "^3.2.5",
     "turbo": "^2.0.14",
@@ -22,5 +22,11 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "appwrite": "^15.0.0",
+    "react-toastify": "^10.0.5",
+    "socket.io-client": "^4.7.5",
+    "zustand": "^4.5.5"
+  }
 }

@@ -1,18 +1,14 @@
 
 import { db } from '../config/database.js';
-import { chatRooms } from '../drizzle/schemas/chatRoom.js';
 import { eq } from 'drizzle-orm';
+import { chatRooms } from '../drizzle/schemas/ChatRooms.schema.js';
 
 export const chatRoomController = {
   createChatRoom: async (req, res) => {
-    const { participants, admin, isGroup, groupAvatar, groupDescription } = req.body;
+    const { participants } = req.body;
     try {
       const [newChatRoom] = await db.insert(chatRooms).values({
-        participants,
-        admin,
-        isGroup,
-        groupAvatar,
-        groupDescription,
+        participants
       }).returning();
       res.status(201).json(newChatRoom);
     } catch (error) {
