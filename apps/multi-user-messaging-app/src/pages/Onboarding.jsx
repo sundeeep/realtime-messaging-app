@@ -10,7 +10,7 @@ const Onboarding = () => {
   }
   return (
     <main className='flex items-center justify-center h-[100vh] w-[100vw]'>
-      <form onSubmit={openChatPage()} className='flex flex-col gap-3 items-start p-3 border rounded-md'>
+      <form onSubmit={openChatPage} className='flex flex-col gap-3 items-start p-3 border rounded-md'>
         <div className="flex flex-col gap-1 items-start">
           <label htmlFor="username">Username</label>
           <input className="border border-orange-600 outline-none rounded-md p-3 w-full" type="text" id="username" name="username" />

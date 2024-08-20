@@ -3,7 +3,7 @@ import HomePage from "./pages/HomePage";
 import Onboarding from "./pages/Onboarding";
 import ChatPage from "./pages/ChatPage";
 import ChatRoom from "./pages/ChatRoom";
-
+import './index.css';
 const App = () => {
 
   return(
