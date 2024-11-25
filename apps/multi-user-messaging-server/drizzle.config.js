@@ -14,13 +14,13 @@ export default defineConfig({
     dbCredentials:{
       url: process.env.DATABASE_URL,
       ssl: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
       }
     },
-    migrations: {
-      table: "migrations",
-      schema: "public"
-    },
+    // migrations: {
+    //   table: "migrations",
+    //   schema: "public"
+    // },
     verbose: true,
     strict: true
 });
