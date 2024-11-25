@@ -4,7 +4,12 @@ import Onboarding from "./pages/Onboarding";
 import ChatPage from "./pages/ChatPage";
 import ChatRoom from "./pages/ChatRoom";
 import './index.css';
+import useSocket from "./hooks/useSocket";
+import { useEffect } from "react";
+
 const App = () => {
+
+  const {socket, io, registerNewUser} = useSocket();
 
   return(
     <Routes>
