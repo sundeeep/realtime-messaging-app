@@ -7,13 +7,13 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "start": "turbo run start",
-    "start:backend": "cd apps/multi-user-messaging-server && npm run dev",
-    "start:frontend": "cd apps/multi-user-messaging-app && npm run dev"
+    "dev:backend": "cd apps/multi-user-messaging-server && npm run dev",
+    "dev:frontend": "cd apps/multi-user-messaging-app && npm run dev"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "turbo": "^2.0.14",
-    "typescript": "^5.4.5"
+    "prettier": "^3.3.3",
+    "turbo": "^2.3.1",
+    "typescript": "^5.7.2"
   },
   "engines": {
     "node": ">=18"
@@ -22,10 +22,5 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "dependencies": {
-    "react-toastify": "^10.0.5",
-    "socket.io-client": "^4.7.5",
-    "zustand": "^4.5.5"
-  }
+  ]
 }
