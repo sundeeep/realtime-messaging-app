@@ -10,8 +10,8 @@ const useSocket = () => {
 
   useEffect(() => {
     if (user) {
+      console.log(user);
       socket.current = io('http://localhost:3500');
-
       socket.current.emit('login', user.id);
 
       socket.current.on('newMessage', (message) => {
@@ -28,6 +28,13 @@ const useSocket = () => {
       };
     }
   }, [user]);
+
+  const registerNewUser = (newUser) => {
+    if(newUser){
+      socket.current.emit('register-new-user', newUser);
+    }
+  }
+  
 
   const sendMessage = (message) => {
     socket.current.emit('sendMessage', message);
@@ -50,11 +57,13 @@ const useSocket = () => {
   };
 
   return {
-    socket: socket.current,
+    socket: socket,
+    io,
     sendMessage,
     sendTypingStatus,
     sendFriendRequest,
-    acceptFriendRequest
+    acceptFriendRequest,
+    registerNewUser
   };
 };
 
